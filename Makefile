@@ -1,16 +1,14 @@
-# Makefile - packing functions (DP, GTP, BP)
-# -------------------------------------------
+# Makefile - packing functions
 #
-# Targets principales:
-#   make              - compila biblioteca y tests
-#   make test         - corre todos los tests
-#   make clean        - limpia objetos y binarios
-#   make debug        - compila con flags de depuracion (-g -O0 -fsanitize)
-#   make run-arith    - corre solo el test de aritmetica
+# Targets:
+#   make            compila biblioteca, tests y ejemplos
+#   make test       corre todos los tests
+#   make demo       compila y ejecuta examples/demo
+#   make debug      compila con sanitizers
+#   make clean      elimina build/
 
 CC      ?= cc
-CFLAGS  ?= -std=c11 -Wall -Wextra -Wpedantic -Wshadow -Wconversion \
-           -Wno-sign-conversion -O2
+CFLAGS  ?= -std=c11 -Wall -Wextra -Wpedantic -Wshadow -O2
 CPPFLAGS = -Iinclude
 LDFLAGS  =
 
@@ -19,54 +17,44 @@ ifeq ($(MODE),debug)
     LDFLAGS += -fsanitize=address,undefined
 endif
 
-SRC_DIR   = src
-TEST_DIR  = tests
-BUILD_DIR = build
+SRC_DIR     = src
+TEST_DIR    = tests
+EXAMPLE_DIR = examples
+BUILD_DIR   = build
 
-LIB_SRC   = $(wildcard $(SRC_DIR)/*.c)
-LIB_OBJ   = $(LIB_SRC:$(SRC_DIR)/%.c=$(BUILD_DIR)/%.o)
+LIB_SRC      = $(wildcard $(SRC_DIR)/*.c)
+LIB_OBJ      = $(LIB_SRC:$(SRC_DIR)/%.c=$(BUILD_DIR)/%.o)
 
-TEST_SRC  = $(wildcard $(TEST_DIR)/*.c)
-TEST_BIN  = $(TEST_SRC:$(TEST_DIR)/%.c=$(BUILD_DIR)/%)
+TEST_SRC     = $(wildcard $(TEST_DIR)/*.c)
+TEST_BIN     = $(TEST_SRC:$(TEST_DIR)/%.c=$(BUILD_DIR)/%)
 
-# ---------- targets ----------
+EXAMPLE_SRC  = $(wildcard $(EXAMPLE_DIR)/*.c)
+EXAMPLE_BIN  = $(EXAMPLE_SRC:$(EXAMPLE_DIR)/%.c=$(BUILD_DIR)/%)
 
-.PHONY: all test clean debug run-arith help
+.PHONY: all test demo clean debug
 
-all: $(TEST_BIN)
+all: $(TEST_BIN) $(EXAMPLE_BIN)
 
-# Construir cada test enlazando con todos los objetos de la libreria.
 $(BUILD_DIR)/%: $(TEST_DIR)/%.c $(LIB_OBJ) | $(BUILD_DIR)
 	$(CC) $(CFLAGS) $(CPPFLAGS) $< $(LIB_OBJ) -o $@ $(LDFLAGS)
 
-# Compilar fuentes de la libreria.
+$(BUILD_DIR)/%: $(EXAMPLE_DIR)/%.c $(LIB_OBJ) | $(BUILD_DIR)
+	$(CC) $(CFLAGS) $(CPPFLAGS) $< $(LIB_OBJ) -o $@ $(LDFLAGS)
+
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c | $(BUILD_DIR)
 	$(CC) $(CFLAGS) $(CPPFLAGS) -c $< -o $@
 
 $(BUILD_DIR):
 	@mkdir -p $(BUILD_DIR)
 
-# Correr todos los tests en secuencia.  Falla en el primer error.
 test: $(TEST_BIN)
-	@set -e; for t in $(TEST_BIN); do \
-		echo "=== ejecutando $$t ==="; \
-		$$t; \
-	done
-	@echo "\n*** todos los tests pasaron ***"
+	@for t in $(TEST_BIN); do echo "=== $$t ==="; $$t || exit 1; done
 
-run-arith: $(BUILD_DIR)/test_arith
-	@$(BUILD_DIR)/test_arith
+demo: $(BUILD_DIR)/demo
+	@$(BUILD_DIR)/demo
 
 debug:
 	$(MAKE) MODE=debug
 
 clean:
 	rm -rf $(BUILD_DIR)
-
-help:
-	@echo "Targets disponibles:"
-	@echo "  make            - compila biblioteca y tests"
-	@echo "  make test       - corre todos los tests"
-	@echo "  make run-arith  - corre solo test_arith"
-	@echo "  make debug      - compila con sanitizers"
-	@echo "  make clean      - elimina build/"

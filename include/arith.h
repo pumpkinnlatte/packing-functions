@@ -3,16 +3,19 @@
 
 #include "packing_types.h"
 
-// C(k, r). Devuelve 0 si k < r.
+// Maximo comun divisor (Euclides).
+pf_int_t gcd_u64(pf_int_t a, pf_int_t b);
+
+// C(k, r). Devuelve 0 si k < r..
 pf_int_t pf_binomial(pf_int_t k, pf_int_t r);
 
-// Dado p = C(k, r), devuelve C(k+1, r).
+// Dado p = C(k, r), devuelve C(k+1, r). Algoritmo 4.
 pf_int_t pf_next_binomial(pf_int_t p, pf_int_t k, pf_int_t r);
 
-// Raiz cuadrada entera: floor(sqrt(x)).
+// floor(sqrt(x)) por busqueda binaria.
 pf_int_t pf_isqrt(pf_int_t x);
 
-// Raiz i-esima entera: floor(x^(1/i)).
+// floor(x^(1/i)) por busqueda binaria.
 pf_int_t pf_iroot(pf_int_t x, pf_int_t i);
 
 #endif

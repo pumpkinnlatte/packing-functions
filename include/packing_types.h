@@ -1,11 +1,6 @@
 /*
  * packing_types.h
- * ----------------
  * Tipos y constantes base del proyecto de packing functions.
- *
- * Centraliza la definicion del tipo entero para que mas adelante
- * sea trivial migrar a precision arbitraria (GMP) cambiando
- * solo este header y la implementacion de arith.c.
  */
 
 #ifndef PACKING_TYPES_H

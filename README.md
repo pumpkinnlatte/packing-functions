@@ -21,8 +21,7 @@ Los 8 algoritmos del paper estan implementados.
     src/        implementacion
     tests/      suite de pruebas
     examples/   programas demostrativos
-    build/      artefactos (creado por make)
- 
+    build/      artefactos 
 ## Uso
  
     make                                    # compila todo
@@ -49,11 +48,10 @@ Ejemplos:
 
 ## Limites del tipo entero
 
-Todo opera sobre `pf_int_t = uint64_t` (0 a 2^64 - 1).
-Se tienen limites:
+Se usa un entero uint64_t (0 a 2^64 - 1). 
 
 **`pf_binomial`**: el Algoritmo 2 multiplica antes de dividir. Los
-intermedios pueden desbordar uint64_t.
+intermedios pueden desbordar.
 
 **`pf_direct_bp`**: phi_1 = beta^m y phi_2 = (beta+1)^m. Para m=10, beta = 100 excede 2^64.
 

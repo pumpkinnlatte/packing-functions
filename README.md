@@ -34,18 +34,18 @@ Los 8 algoritmos del paper estan implementados.
  
 ### CLI interactiva
  
-El programa `demo_cli` permite ejecutar los polinomios por linea de comandos.
+El programa `p-functions` permite ejecutar los polinomios por linea de comandos.
  
 Ejemplos:
  
-    ./build/demo_cli dp encode 2 3          # vector DP -> alpha (= 17)
-    ./build/demo_cli dp decode 2 17         # alpha -> vector DP (= (2,3))
-    ./build/demo_cli gtp encode 0 2 5       # vector GTP -> alpha
-    ./build/demo_cli gtp decode 3 8         # alpha -> vector GTP
-    ./build/demo_cli bp encode 1 2 1        # vector BP -> alpha (= 21)
-    ./build/demo_cli bp decode 3 21         # alpha -> vector BP (= (1,2,1))
-    ./build/demo_cli dp table 6             # imprime tabla 6x6 de DP
-    ./build/demo_cli help                   # ayuda completa
+    ./build/p-functions dp encode 2 3          # vector DP -> alpha (= 17)
+    ./build/p-functions dp decode 2 17         # alpha -> vector DP (= (2,3))
+    ./build/p-functions gtp encode 0 2 5       # vector GTP -> alpha
+    ./build/p-functions gtp decode 3 8         # alpha -> vector GTP
+    ./build/p-functions bp encode 1 2 1        # vector BP -> alpha (= 21)
+    ./build/p-functions bp decode 3 21         # alpha -> vector BP (= (1,2,1))
+    ./build/p-functions dp table 6             # imprime tabla 6x6 de DP
+    ./build/p-functions help                   # ayuda completa
 
 ## Limites del tipo entero
 

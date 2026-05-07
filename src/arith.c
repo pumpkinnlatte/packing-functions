@@ -9,7 +9,7 @@ pf_int_t gcd_u64(pf_int_t a, pf_int_t b) {
     return a;
 }
 
-// Algoritmo 2 del paper: C(k, r)
+// Algoritmo 2. Coeficiente Binomial C(k, r)
 pf_int_t pf_binomial(pf_int_t k, pf_int_t r) {
     if (k < r) return 0;
 
@@ -20,14 +20,12 @@ pf_int_t pf_binomial(pf_int_t k, pf_int_t r) {
     return b;
 }
 
-// Algoritmo 4 del paper: C(k+1, r) a partir de p = C(k, r)
+// Algoritmo 4. Next Binomial C(k+1, r)
 pf_int_t pf_next_binomial(pf_int_t p, pf_int_t k, pf_int_t r) {
     if (k + 1 <  r) return 0;
     if (k + 1 == r) return 1;
     return p * (k + 1) / (k + 1 - r);
 }
-
-
 
 pf_int_t pf_isqrt(pf_int_t x) {
     if (x < 2) return x;
@@ -42,6 +40,7 @@ pf_int_t pf_isqrt(pf_int_t x) {
     }
     return lo;
 }
+
 static pf_int_t pow_saturating(pf_int_t base, pf_int_t i, pf_int_t limit) {
     pf_int_t r = 1;
     for (pf_int_t k = 0; k < i; k++) {
@@ -66,3 +65,4 @@ pf_int_t pf_iroot(pf_int_t x, pf_int_t i) {
     }
     return lo;
 }
+

@@ -1,4 +1,4 @@
-// demo.c — recorre los algoritmos del paper con ejemplos visibles.
+// demo.c — ejecuta los algoritmos del paper con ejemplos visuales.
 
 #include <stdio.h>
 #include <inttypes.h>
@@ -8,10 +8,10 @@ static void hr(void) {
     printf("------------------------------------------------------------\n");
 }
 
-// ---------- demo 1: pf_binomial paso a paso ----------
-// Mostramos lo que calcula el algoritmo iteracion por iteracion.
+// demo 1. pf_binomial paso a paso 
+// Calcula el algoritmo iteracion por iteracion.
 static void demo_binomial_steps(pf_int_t k, pf_int_t r) {
-    printf("calculando C(%" PRIu64 ", %" PRIu64 ") iterativamente:\n", k, r);
+    printf("calculando C(%" PRIu64 ", %" PRIu64 "):\n", k, r);
     printf("  i=0 (inicial)              b = 1\n");
 
     pf_int_t b = 1;
@@ -29,9 +29,9 @@ static void demo_binomial_steps(pf_int_t k, pf_int_t r) {
            k, r, pf_binomial(k, r));
 }
 
-// ---------- demo 2: pf_next_binomial recorriendo una columna ----------
-// Empezamos en C(r, r) = 1 y vamos bajando por la columna r del Pascal,
-// usando next_binomial en cada salto. Esto ilustra para que sirve.
+// demo 2. pf_next_binomial recorriendo una columna 
+// Se empieza en C(r, r) = 1 y se baja por la columna r
+// usando next_binomial en cada salto. Ilustrativo.
 static void demo_next_binomial(pf_int_t r, pf_int_t hasta) {
     printf("recorriendo la columna r=%" PRIu64 " del triangulo de Pascal\n", r);
     printf("usando solo pf_next_binomial:\n");
@@ -47,13 +47,11 @@ static void demo_next_binomial(pf_int_t r, pf_int_t hasta) {
     }
 }
 
-// ---------- demo 3: tabla DP 2D ----------
-// Reproduce la tabla 5x5 del paper aplicando la formula
-//   alpha = w1 + C(1 + w1 + w2, 2)
-// con pf_binomial. Aun no usamos una funcion direct_dp; lo hacemos
-// inline para mostrar la mecanica.
+// demo 3. tabla DP 2D 
+// Reproduce una matriz n x n aplicando la formula
+//   alpha = w1 + C(1 + w1 + w2, 2) con pf_binomial.
 static void demo_dp_table(pf_int_t size) {
-    printf("tabla DP en 2D (formula: alpha = w1 + C(1+w1+w2, 2)):\n\n");
+    printf("tabla DP en 2D (alpha = w1 + C(1+w1+w2, 2)):\n\n");
 
     printf("         ");
     for (pf_int_t w2 = 0; w2 < size; w2++) printf("w2=%" PRIu64 "   ", w2);
@@ -69,8 +67,7 @@ static void demo_dp_table(pf_int_t size) {
     }
 }
 
-// ---------- demo 4: vector concreto ----------
-// Disecciona el calculo para un vector dado.
+// demo 4. vector concreto
 static void demo_dp_vector(pf_int_t w1, pf_int_t w2) {
     pf_int_t d = w1 + w2;
     pf_int_t before = pf_binomial(d + 1, 2);
@@ -103,7 +100,7 @@ int main(void) {
 
     printf("\n");
     hr();
-    printf("DEMO 3: tabla DP 2D (compararla con la del paper)\n");
+    printf("DEMO 3: tabla DP 2D\n");
     hr();
     demo_dp_table(5);
 

@@ -1,11 +1,10 @@
 // Tests del modulo DP.
 //
-// Estrategia:
-//  - Verificacion directa contra la tabla 5x5 del paper.
+// Se verifican los siguientes aspectos:
+//  - Verificacion contra la tabla 5x5.
 //  - Coincidencia entre direct_dp_2d y direct_dp para m=2.
-//  - Invariante de biyeccion en 2D: inverse(direct(W)) == W.
-//  - Invariante de biyeccion en 2D: direct(inverse(alpha)) == alpha.
-
+//  - inverse(direct(W)) == W.
+//  - direct(inverse(alpha)) == alpha.
 #include <stdio.h>
 #include <inttypes.h>
 #include "dp.h"
@@ -17,6 +16,7 @@ static int fails = 0;
                           __FILE__, __LINE__, msg); fails++; } \
 } while (0)
 
+// Compara dos valores enteros. Reporta un fallo si no son iguales. 
 #define CHECK_EQ(a, b, msg) do {                               \
     pf_int_t _a = (a), _b = (b);                               \
     if (_a != _b) {                                            \
@@ -27,9 +27,8 @@ static int fails = 0;
     }                                                          \
 } while (0)
 
-// Tabla 5x5 del paper [GTP] seccion 3.
-// table[w1][w2] = alpha esperado.
-static const pf_int_t paper_table[5][5] = {
+// Tabla 5x5.
+static const pf_int_t example_table[5][5] = {
     { 0,  1,  3,  6, 10},
     { 2,  4,  7, 11, 16},
     { 5,  8, 12, 17, 23},
@@ -37,10 +36,10 @@ static const pf_int_t paper_table[5][5] = {
     {14, 19, 25, 32, 40}
 };
 
-static void test_direct_dp_2d_paper_table(void) {
+static void test_direct_dp_2d_example_table(void) {
     for (pf_int_t w1 = 0; w1 < 5; w1++) {
         for (pf_int_t w2 = 0; w2 < 5; w2++) {
-            CHECK_EQ(pf_direct_dp_2d(w1, w2), paper_table[w1][w2],
+            CHECK_EQ(pf_direct_dp_2d(w1, w2), example_table[w1][w2],
                      "tabla 5x5 del paper");
         }
     }
@@ -58,22 +57,28 @@ static void test_direct_dp_general_matches_2d(void) {
 }
 
 static void test_direct_dp_higher_dim_known_values(void) {
-    // Para m=1, alpha = C(0 + w_1, 1) = w_1.
+    // m=1: la formula reduce a C(w1, 1) = w1.
     pf_int_t W1[1] = {7};
-    CHECK_EQ(pf_direct_dp(W1, 1), 7, "DP 1D: alpha = w_1");
+    CHECK_EQ(pf_direct_dp(W1, 1), 7, "DP 1D: alpha = w1");
 
-    // (0,0,0) -> 0 en cualquier dimension.
-    pf_int_t Z3[3] = {0, 0, 0};
-    CHECK_EQ(pf_direct_dp(Z3, 3), 0, "DP 3D: (0,0,0) -> 0");
-    pf_int_t Z5[5] = {0, 0, 0, 0, 0};
-    CHECK_EQ(pf_direct_dp(Z5, 5), 0, "DP 5D: ceros -> 0");
+    // m=3
+    pf_int_t A[3] = {1, 0, 0};  
+    CHECK_EQ(pf_direct_dp(A, 3), 3,  "DP 3D: (1,0,0) -> 3");
+    pf_int_t B[3] = {0, 1, 0};
+    CHECK_EQ(pf_direct_dp(B, 3), 2,  "DP 3D: (0,1,0) -> 2");
+    pf_int_t C[3] = {1, 2, 3};
+    CHECK_EQ(pf_direct_dp(C, 3), 63, "DP 3D: (1,2,3) -> 63");
+
+    // m=5: verificar acumulacion en mas dimensiones.
+    pf_int_t D[5] = {2, 0, 1, 0, 3};
+    CHECK_EQ(pf_direct_dp(D, 5), 282, "DP 5D: (2,0,1,0,3) -> 282");
 }
 
-static void test_inverse_dp_2d_paper_table(void) {
-    // Para cada celda de la tabla, decodificar el alpha y verificar (w1, w2).
+static void test_inverse_dp_2d_example_table(void) {
+    // Para cada celda de la tabla, decodificar alpha y verificar (w1, w2).
     for (pf_int_t w1 = 0; w1 < 5; w1++) {
         for (pf_int_t w2 = 0; w2 < 5; w2++) {
-            pf_int_t alpha = paper_table[w1][w2];
+            pf_int_t alpha = example_table[w1][w2];
             pf_int_t W[2];
             pf_inverse_dp_2d(alpha, W);
             CHECK_EQ(W[0], w1, "inverse 2D: w1");
@@ -108,10 +113,10 @@ static void test_bijection_inverse_then_direct(void) {
 }
 
 int main(void) {
-    test_direct_dp_2d_paper_table();
+    test_direct_dp_2d_example_table();
     test_direct_dp_general_matches_2d();
     test_direct_dp_higher_dim_known_values();
-    test_inverse_dp_2d_paper_table();
+    test_inverse_dp_2d_example_table();
     test_bijection_direct_then_inverse();
     test_bijection_inverse_then_direct();
 

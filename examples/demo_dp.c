@@ -1,4 +1,4 @@
-// demo_dp.c -- Diagonal Polynomial en accion.
+// demo_dp.c -- Diagonal Polynomial.
 
 #include <stdio.h>
 #include <inttypes.h>
@@ -22,7 +22,7 @@ static void show_table_2d(pf_int_t size) {
     }
 }
 
-// Disecciona el calculo para un (w1, w2) dado.
+// Muestra el calculo para un (w1, w2) dado.
 static void dissect_2d(pf_int_t w1, pf_int_t w2) {
     pf_int_t alpha = pf_direct_dp_2d(w1, w2);
     pf_int_t W[2];

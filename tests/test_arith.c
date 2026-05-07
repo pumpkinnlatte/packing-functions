@@ -1,8 +1,8 @@
 // Tests para arith.c
 //
-// LIMITE DEL ALGORITMO LITERAL: la implementacion fiel al Algoritmo 2
-// del paper sufre overflow intermedio en uint64_t para algunos C(k,r)
-// con k >= 63. Empiricamente, todos los C(k,r) para k en [0, 62] son
+// LIMITACIONES: la implementacion del Algoritmo 2
+// del paper sufre overflow para algunos C(k,r) con k >= 63.
+// Empiricamente, todos los C(k,r) para k en [0, 62] son
 // correctos. Los tests respetan ese rango.
 
 #include <stdio.h>
@@ -52,7 +52,7 @@ static void test_binomial_pascal(void) {
 }
 
 static void test_binomial_known(void) {
-    // todos con k <= 62, dentro del rango seguro
+    // todos con k <= 62, dentro del rango
     CHECK_EQ(pf_binomial(20, 10), 184756ULL, "C(20,10)");
     CHECK_EQ(pf_binomial(30, 15), 155117520ULL, "C(30,15)");
     CHECK_EQ(pf_binomial(50, 25), 126410606437752ULL, "C(50,25)");

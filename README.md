@@ -1,6 +1,6 @@
 # gtp-implementation
 Implementacion didactica de las funciones de empaquetamiento estudiadas
-en Torres-Jimenez et al. (2015) y Fraenkel (1983).
+en Torres-Jimenez et al. (2015).
  
 Los 8 algoritmos del paper estan implementados.
  

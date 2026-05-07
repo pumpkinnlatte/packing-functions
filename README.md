@@ -2,8 +2,7 @@
 Implementacion didactica de las funciones de empaquetamiento estudiadas
 en Torres-Jimenez et al. (2015) y Fraenkel (1983).
  
-Los 8 algoritmos del paper estan implementados, documentados y
-testeados con invariantes de biyeccion.
+Los 8 algoritmos del paper estan implementados.
  
 | # | Algoritmo                  |
 |---|----------------------------|
@@ -15,9 +14,6 @@ testeados con invariantes de biyeccion.
 | 6 | DirectDP                   |
 | 7 | DirectBP                   | 
 | 8 | InverseBP                  | 
- 
-Adicionales: InverseDP 2D (formula cerrada), InverseDP m-dimensional
-(via biyeccion GTP <-> DP), gtp_to_dp y dp_to_gtp.
  
 ## Estructura
  

@@ -18,7 +18,7 @@
 CC      ?= cc
 CFLAGS  ?= -std=c11 -Wall -Wextra -Wpedantic -Wshadow -O2
 CPPFLAGS = -Iinclude
-LDFLAGS  =
+LDFLAGS  = -lm
 
 ifeq ($(MODE),debug)
     CFLAGS  += -g -O0 -fsanitize=address,undefined

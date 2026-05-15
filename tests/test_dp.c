@@ -3,11 +3,13 @@
 // Se verifican los siguientes aspectos:
 //  - Verificacion contra la tabla 5x5.
 //  - Coincidencia entre direct_dp_2d y direct_dp para m=2.
-//  - inverse(direct(W)) == W.
+//  - inverse(direct(W)) == W para m=2,3,4 (closed-form y via GTP).
 //  - direct(inverse(alpha)) == alpha.
+//  - Concordancia entre los inversos closed-form (2D/3D/4D) y el inverso via GTP.
 #include <stdio.h>
 #include <inttypes.h>
 #include "dp.h"
+#include "gtp.h"
 
 static int fails = 0;
 
@@ -112,6 +114,102 @@ static void test_bijection_inverse_then_direct(void) {
     }
 }
 
+/* ------------------------------------------------------------------ *
+ *  Concordancia closed-form vs GTP: inverse_Xd(alpha) == inverse_dp(alpha, X)
+ * ------------------------------------------------------------------ */
+
+static void test_inverse_2d_matches_gtp(void) {
+    for (pf_int_t alpha = 0; alpha <= 500; alpha++) {
+        pf_int_t W_cf[2], W_gtp[2];
+        pf_inverse_dp_2d(alpha, W_cf);
+        pf_inverse_dp(alpha, 2, W_gtp);
+        CHECK_EQ(W_cf[0], W_gtp[0], "2D closed-form vs GTP: w1");
+        CHECK_EQ(W_cf[1], W_gtp[1], "2D closed-form vs GTP: w2");
+    }
+}
+
+static void test_inverse_3d_matches_gtp(void) {
+    for (pf_int_t alpha = 0; alpha <= 500; alpha++) {
+        pf_int_t W_cf[3], W_gtp[3];
+        pf_inverse_dp_3d(alpha, W_cf);
+        pf_inverse_dp(alpha, 3, W_gtp);
+        CHECK_EQ(W_cf[0], W_gtp[0], "3D closed-form vs GTP: w1");
+        CHECK_EQ(W_cf[1], W_gtp[1], "3D closed-form vs GTP: w2");
+        CHECK_EQ(W_cf[2], W_gtp[2], "3D closed-form vs GTP: w3");
+    }
+}
+
+static void test_inverse_4d_matches_gtp(void) {
+    for (pf_int_t alpha = 0; alpha <= 500; alpha++) {
+        pf_int_t W_cf[4], W_gtp[4];
+        pf_inverse_dp_4d(alpha, W_cf);
+        pf_inverse_dp(alpha, 4, W_gtp);
+        CHECK_EQ(W_cf[0], W_gtp[0], "4D closed-form vs GTP: w1");
+        CHECK_EQ(W_cf[1], W_gtp[1], "4D closed-form vs GTP: w2");
+        CHECK_EQ(W_cf[2], W_gtp[2], "4D closed-form vs GTP: w3");
+        CHECK_EQ(W_cf[3], W_gtp[3], "4D closed-form vs GTP: w4");
+    }
+}
+
+/* ------------------------------------------------------------------ *
+ *  Roundtrip closed-form: inverse_Xd(direct_dp(W)) == W para m=3,4
+ * ------------------------------------------------------------------ */
+
+static void test_roundtrip_3d(void) {
+    for (pf_int_t a = 0; a <= 6; a++) {
+        for (pf_int_t b = 0; b <= 6; b++) {
+            for (pf_int_t c = 0; c <= 6; c++) {
+                pf_int_t W[3] = {a, b, c};
+                pf_int_t alpha = pf_direct_dp(W, 3);
+                pf_int_t Wrec[3];
+                pf_inverse_dp_3d(alpha, Wrec);
+                CHECK_EQ(Wrec[0], a, "roundtrip 3D closed-form: w1");
+                CHECK_EQ(Wrec[1], b, "roundtrip 3D closed-form: w2");
+                CHECK_EQ(Wrec[2], c, "roundtrip 3D closed-form: w3");
+            }
+        }
+    }
+}
+
+static void test_roundtrip_4d(void) {
+    for (pf_int_t a = 0; a <= 4; a++) {
+        for (pf_int_t b = 0; b <= 4; b++) {
+            for (pf_int_t c = 0; c <= 4; c++) {
+                for (pf_int_t d = 0; d <= 4; d++) {
+                    pf_int_t W[4] = {a, b, c, d};
+                    pf_int_t alpha = pf_direct_dp(W, 4);
+                    pf_int_t Wrec[4];
+                    pf_inverse_dp_4d(alpha, Wrec);
+                    CHECK_EQ(Wrec[0], a, "roundtrip 4D closed-form: w1");
+                    CHECK_EQ(Wrec[1], b, "roundtrip 4D closed-form: w2");
+                    CHECK_EQ(Wrec[2], c, "roundtrip 4D closed-form: w3");
+                    CHECK_EQ(Wrec[3], d, "roundtrip 4D closed-form: w4");
+                }
+            }
+        }
+    }
+}
+
+/* ------------------------------------------------------------------ *
+ *  Concordancia closed-form vs directo: direct_dp(inverse_Xd(alpha)) == alpha
+ * ------------------------------------------------------------------ */
+
+static void test_direct_after_inverse_3d(void) {
+    for (pf_int_t alpha = 0; alpha < 500; alpha++) {
+        pf_int_t W[3];
+        pf_inverse_dp_3d(alpha, W);
+        CHECK_EQ(pf_direct_dp(W, 3), alpha, "direct(inverse_3d(alpha)) == alpha");
+    }
+}
+
+static void test_direct_after_inverse_4d(void) {
+    for (pf_int_t alpha = 0; alpha < 500; alpha++) {
+        pf_int_t W[4];
+        pf_inverse_dp_4d(alpha, W);
+        CHECK_EQ(pf_direct_dp(W, 4), alpha, "direct(inverse_4d(alpha)) == alpha");
+    }
+}
+
 int main(void) {
     test_direct_dp_2d_example_table();
     test_direct_dp_general_matches_2d();
@@ -119,6 +217,13 @@ int main(void) {
     test_inverse_dp_2d_example_table();
     test_bijection_direct_then_inverse();
     test_bijection_inverse_then_direct();
+    test_inverse_2d_matches_gtp();
+    test_inverse_3d_matches_gtp();
+    test_inverse_4d_matches_gtp();
+    test_roundtrip_3d();
+    test_roundtrip_4d();
+    test_direct_after_inverse_3d();
+    test_direct_after_inverse_4d();
 
     if (fails == 0) printf("dp: OK\n");
     else            printf("dp: %d FAILS\n", fails);
